@@ -1,3 +1,40 @@
+# Install backend
+
+brew install ruby
+gem install bundle
+bundle install
+./bin/bundle exec rails db:create
+./bin/bundle exec rails db:migrate
+./bin/bundle exec rails db:seed
+./bin/bundle exec rails test
+./bin/bundle exec rails s
+
+or
+
+./dev.sh
+
+#
+First run backend on port 3000
+
+./dev.sh
+
+then run here in port 3001
+First install
+
+brew install node
+brew install nvm
+nvm install
+npm install pnpm
+pnpm install
+pnpm run dev
+
+or
+
+./dev.sh
+
+
+
+
 # Vite + React + Tailwind CSS starter
 
 Inspired by [posva's](https://github.com/posva) [vite-tailwind-starter](https://github.com/posva/vite-tailwind-starter)

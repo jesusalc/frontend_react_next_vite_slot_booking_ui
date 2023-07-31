@@ -1,6 +1,8 @@
-import React from 'react';
 
-const AvailableSlots = ({ slots, onBookSlot }: any): any => {
+import React from 'react';
+import { Slot, SlotsAvailableProps } from '../types';
+
+const AvailableSlots: React.FC<SlotsAvailableProps> = ({ slots, onBookSlot }) => {
   return (
     <div className="p-4">
       <h2 className="text-xl mb-4">Available Slots</h2>
