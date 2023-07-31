@@ -1,9 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import {isSuccessResponse, SlotsAvailable, SlotAvailable, ApiResponse } from '../types'; // Adjust the path accordingly
+import {isSuccessResponse, SlotsAvailable, SlotAvailable, ApiResponse } from '../types';
 
-const CalendarWithSlots: React.FC = () => {
-  const [slots, setSlots] = useState<SlotAvailable[]>([]);
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+interface CalendarWithSlotsProps {
+  slots: SlotAvailable[];
+  setSlots: (slots: SlotAvailable[]) => void;
+  setDefaultSlots: (slots: SlotAvailable[]) => void;
+  handleCalendarSlot: (slotDate: string, index: number) => void;
+}
+
+const CalendarWithSlots: React.FC<CalendarWithSlotsProps> = ({
+  slots,
+  setSlots,
+  setDefaultSlots,
+  handleCalendarSlot,
+}) => {
 
 
   // Fetch available slots from the backend
@@ -14,6 +24,7 @@ const CalendarWithSlots: React.FC = () => {
         if (isSuccessResponse(response)) {
           const slotsData = response.data.slots as SlotsAvailable; // Casting to the correct type
           setSlots(slotsData);
+          setDefaultSlots(slotsData);
         } else if (response.error) {
           // Handle the error case
           console.error(response.error);
@@ -28,37 +39,24 @@ const CalendarWithSlots: React.FC = () => {
       });
   }, []);
 
-
-
-
-
-
-  const handleCalendarSlot = (date: string, count: number) => {
-    if (selectedDate === date) {
-      setSelectedDate(null); // Deselect the date
-    } else {
-      setSelectedDate(date);
-    }
-    // Logic to update the count and handle other UI changes as needed
-  };
-
   return (
     <div>
-      {slots.map((slotAvailable: SlotAvailable) => (
+      {slots.map((slotAvailable: SlotAvailable, index: number) => (
         <button
           key={slotAvailable.date}
-          onClick={() => handleCalendarSlot(slotAvailable.date, slotAvailable.count)}
-          className={`${
-            selectedDate === slotAvailable.date ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-500'
-          }`}
-          disabled={selectedDate === slotAvailable.date}
+          onClick={() => handleCalendarSlot(slotAvailable.date, index)}
+          className={`${slotAvailable.disabled ?  'bg-gray-300 cursor-not-allowed': 'bg-blue-500' }`}
+          disabled={!!slotAvailable.disabled}
         >
           {slotAvailable.date}: {slotAvailable.count} slots available
         </button>
       ))}
-      {/* Other components and logic to handle the 'date' and 'duration' fields */}
     </div>
   );
 };
+
+
+
+
 
 export default CalendarWithSlots;

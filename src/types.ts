@@ -4,6 +4,7 @@
 export type SlotAvailable = {
   date: string;
   count: number;
+  disabled: boolean
 };
 
 export type SlotsAvailable = SlotAvailable[];

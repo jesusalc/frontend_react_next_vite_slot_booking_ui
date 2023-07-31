@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Slot, BookingFormProps, ApiResponse } from '../types'; // Adjust the path accordingly
+import { Slot, BookingFormProps, ApiResponse, SlotAvailable} from '../types'; // Adjust the path accordingly
 import CalendarWithSlots from './CalendarWithSlots'; // Adjust the path accordingly
 
 const BookingForm: React.FC<BookingFormProps> = ({ onSearchSlots }) => {
@@ -28,6 +28,9 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSearchSlots }) => {
   const [date, setDate] = useState<string>('');
   const [duration, setDuration] = useState<string>('');
   const [errors, setErrors] = useState<{ date?: string; duration?: string }>({});
+  const [slots, setSlots] = useState<SlotAvailable[]>([]);
+  const [defaultSlots, setDefaultSlots] = useState<SlotAvailable[]>([]);
+
 
   const validateField = (field: string, value: string) => {
     if (!value) return `${field} is required`;
@@ -44,9 +47,26 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSearchSlots }) => {
     }
   };
 
+  const handleCalendarSlot = (slotDate: string, index: number) => {
+    let newSlots = [...slots];
+    if (slots[index].disabled) {
+      newSlots[index].count += 1;
+      newSlots[index].disabled = newSlots[index].count > 0;
+      handleChange('date', '');
+      handleChange('duration', '');
+    } else {
+      newSlots[index].count -= 1;
+      newSlots[index].disabled = true;
+      handleChange('date', slotDate);
+      handleChange('duration', '1');
+    }
+    setSlots(newSlots);
+  };
+
+
   return (
     <form onSubmit={handleSubmit} className="p-4">
-      <CalendarWithSlots  /> {/* Pass any required props */}
+      <CalendarWithSlots slots={slots} setSlots={setSlots} setDefaultSlots={setDefaultSlots} handleCalendarSlot={handleCalendarSlot} />
       <div className={`mb-4 ${errors.date ? 'border-red-400 border' : ''}`}>
         <label className="block text-sm font-bold mb-2">Date:</label>
         <input
