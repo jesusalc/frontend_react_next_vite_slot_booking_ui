@@ -77,31 +77,57 @@ const BookedSlots: React.FC<SlotsBookedProps> = ({ slots, onBookSlot }) => {
   const handleCloseDeleted = () => {
     setShowDeleted(false);
   };
+    // Helper function to group slots by day
+    const groupSlotsByDay = () => {
+      const groupedSlots: { [date: string]: any[] } = {};
+      slots.forEach((slot: any) => {
+        const date = format(parseISO(slot.start), 'yyyy-MM-dd');
+        if (!groupedSlots[date]) {
+          groupedSlots[date] = [slot];
+        } else {
+          groupedSlots[date].push(slot);
+        }
+      });
+      return groupedSlots;
+    };
+
+    // Group slots by day
+    const groupedSlots = groupSlotsByDay();
   return (
-    <div className="p-4">
-      <h2 className="text-xl mb-4">Booked Slots</h2>
-      <ul className="space-y-4">
-      {slots.map((slot: any, index: any): any => (
-        <li key={index} className="bg-white p-4 shadow rounded-md">
-          <div className="flex justify-between items-center">
-            <span className="text-gray-800">{formatSlotTime(slot.start, slot.end)}</span>
-            <div className="space-x-2">
-              <button
-                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                onClick={() => handleDeleteSlot(slot)}
-              >
-                <FiTrash /> Delete Slot
-              </button>
-              <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                onClick={() => handleEditSlot(slot)}
-              >
-                <FiEdit /> Edit Slot
-              </button>
-            </div>
+    <div className="grid grid-cols-4 gap-4 md:grid-cols-2 lg:grid-cols-4">
+      {Object.keys(groupedSlots).map((date, index) => {
+        const slotsForDay = groupedSlots[date];
+        return (
+          <div key={index} className="border rounded-md p-4">
+            <div className="font-bold mb-2">{format(parseISO(date), 'MMM')}</div>
+            {slotsForDay.map((slot: any, slotIndex: any) => (
+              <div key={slotIndex} className="flex items-center mb-2">
+                {/* Show day number and count */}
+                <div className="w-8 h-8 flex items-center justify-center bg-blue-500 text-white font-bold rounded-md mr-2">
+                  {/* {format(parseISO(slot.start), 'd')} */}
+                  {formatSlotTime(slot.start, slot.end)}
+                  {/* <span className="text-gray-800">{formatSlotTime(slot.start, slot.end)}</span> */}
+                  {/* Show count if available */}
+                  {slot.count && <span className="ml-1 text-xs">:{slot.count}</span>}
+                </div>
+                {/* Add your buttons and other slot data here */}
+                <button
+                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                  onClick={() => handleDeleteSlot(slot)}
+                >
+                  <FiTrash />
+                </button>
+                <button
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  onClick={() => handleEditSlot(slot)}
+                >
+                  <FiEdit />
+                </button>
+              </div>
+            ))}
           </div>
-        </li>
-      ))}
+        );
+      })}
       {showDeleteConfirmation && (
         <DeleteConfirmationView
           onConfirm={handleConfirmDelete}
@@ -111,8 +137,7 @@ const BookedSlots: React.FC<SlotsBookedProps> = ({ slots, onBookSlot }) => {
       {showDeleting && <DeletingView />}
       {showDeleted && <DeletedView isSuccess={deleteSuccess} onClose={handleCloseDeleted} />}
       {showEditModal && <EditSlotView onClose={() => setShowEditModal(false)} />}
-    </ul>
-    </div>
+      </div>
   );
 }
 
