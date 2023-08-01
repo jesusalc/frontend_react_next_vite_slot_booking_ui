@@ -12,11 +12,11 @@ const CalendarMonth: React.FC<CalendarMonthProps> = ({ month, bookedDates }) => 
   console.log('CalendarMonth month:', month, ' bookedDates:', bookedDates);
   const weeks: { weekNumber: number; dates: Date[] }[] = useMemo(() => {
     const firstDayOfMonth = startOfMonth(month);
-    const weeksInMonth = getWeeksInMonth(month, { weekStartsOn: 1 }); // Start week on Monday
+    const lastDayOfMonth = new Date(month.getFullYear(), month.getMonth() + 1, 0);
     const weeksArray: { weekNumber: number; dates: Date[] }[] = [];
 
     let currentDate = firstDayOfMonth;
-    for (let weekIndex = 0; weekIndex < weeksInMonth; weekIndex++) {
+    while (currentDate <= lastDayOfMonth) {
       const week: Date[] = [];
       for (let dayIndex = 0; dayIndex < 7; dayIndex++) {
         week.push(currentDate);
@@ -28,6 +28,7 @@ const CalendarMonth: React.FC<CalendarMonthProps> = ({ month, bookedDates }) => 
 
     return weeksArray;
   }, [month]);
+
 
   const firstDayOfMonth = new Date(month.getFullYear(), month.getMonth(), 1).getDay();
   const totalDaysInMonth = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate();
