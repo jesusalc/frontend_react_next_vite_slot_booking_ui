@@ -1,20 +1,20 @@
 
-// Slots Available date duration
+// Slots Booked date duration
 
-export type SlotAvailable = {
+export type SlotBooked = {
   date: string;
   count: number;
   disabled: boolean
 };
 
-export type SlotsAvailable = SlotAvailable[];
+export type SlotsBooked = SlotBooked[];
 
-export type SlotsAvailableResponseData = {
-  slots: SlotsAvailable;
+export type SlotsBookedResponseData = {
+  slots: SlotsBooked;
 };
-export interface SlotsAvailableProps {
-  slots: SlotsAvailable;
-  onBookSlot: (slot: SlotAvailable) => void;
+export interface SlotsBookedProps {
+  slots: SlotsBooked;
+  onBookSlot: (slot: SlotBooked) => void;
 }
 
 
@@ -36,7 +36,7 @@ export interface SlotsProps {
 /// Response data error success
 export type SuccessResponse = {
   error: string;
-  data: SlotsResponseData | SlotsAvailableResponseData;
+  data: SlotsResponseData | SlotsBookedResponseData;
   status: string;
 };
 export type ErrorResponse = {
@@ -56,5 +56,5 @@ export interface BookingFormProps {
 }
 
 export interface CalendarWithSlotsProps {
-  slots: SlotAvailable[]; // Assuming the correct import of SlotAvailable type
+  slots: SlotBooked[]; // Assuming the correct import of SlotBooked type
 }

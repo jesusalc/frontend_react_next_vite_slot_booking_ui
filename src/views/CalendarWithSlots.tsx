@@ -1,28 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import {isSuccessResponse, SlotsAvailable, SlotAvailable, ApiResponse } from '../types';
+import {isSuccessResponse, SlotsBooked, SlotBooked, ApiResponse } from '../types_booked';
 
 interface CalendarWithSlotsProps {
-  slots: SlotAvailable[];
-  setSlots: (slots: SlotAvailable[]) => void;
-  setDefaultSlots: (slots: SlotAvailable[]) => void;
-  handleCalendarSlot: (slotDate: string, index: number) => void;
+  slots: SlotBooked[];
+  defaultSlots: SlotBooked[];
+  setSlots: (slots: SlotBooked[]) => void;
+  setDefaultSlots: (slots: SlotBooked[]) => void;
+  handleDiminishSlot: (slotDate: string, index: number) => void;
+  handleResetSlot: (slotDate: string, index: number) => void;
 }
 
 const CalendarWithSlots: React.FC<CalendarWithSlotsProps> = ({
   slots,
+  defaultSlots,
   setSlots,
   setDefaultSlots,
-  handleCalendarSlot,
+  handleDiminishSlot,
+  handleResetSlot,
 }) => {
 
 
-  // Fetch available slots from the backend
+  // Fetch booked slots from the backend
   useEffect(() => {
-    fetch('http://localhost:3000/api/v1/all_available_slots')
+    fetch('http://localhost:3000/api/v1/booked/slots/all')
       .then((res) => res.json())
       .then((response: ApiResponse) => {
         if (isSuccessResponse(response)) {
-          const slotsData = response.data.slots as SlotsAvailable; // Casting to the correct type
+          const slotsData = response.data.slots as SlotsBooked; // Casting to the correct type
           setSlots(slotsData);
           setDefaultSlots(slotsData);
         } else if (response.error) {
@@ -41,16 +45,36 @@ const CalendarWithSlots: React.FC<CalendarWithSlotsProps> = ({
 
   return (
     <div>
-      {slots.map((slotAvailable: SlotAvailable, index: number) => (
+      {slots.map((slotBooked: SlotBooked, index: number) => (
         <button
-          key={slotAvailable.date}
-          onClick={() => handleCalendarSlot(slotAvailable.date, index)}
-          className={`${slotAvailable.disabled ?  'bg-gray-300 cursor-not-allowed': 'bg-blue-500' }`}
-          disabled={!!slotAvailable.disabled}
+          key={slotBooked.date}
+          onClick={() => handleDiminishSlot(slotBooked.date, index)}
+          className={`
+          ${slotBooked.disabled ? 'bg-gray-200 text-gray-600' : 'bg-blue-200 text-blue-600'}
+          hover:bg-blue-300 text-white font-bold py-4 px-8 rounded-full
+          shadow-md focus:outline-none focus:shadow-outline
+          transition duration-150 ease-in-out
+          cursor-pointer disabled:cursor-not-allowed
+        `}
+          disabled={!!slotBooked.disabled}
         >
-          {slotAvailable.date}: {slotAvailable.count} slots available
+          {slotBooked.date}: {slotBooked.count}
         </button>
       ))}
+      <button
+          key='reset'
+          onClick={() => handleResetSlot('',0)}
+          className={`
+          ${slots.length === 0 ? 'bg-gray-200 text-gray-600' : 'bg-blue-200 text-blue-600'}
+          hover:bg-blue-300 text-white font-bold py-4 px-8 rounded-full
+          shadow-md focus:outline-none focus:shadow-outline
+          transition duration-150 ease-in-out
+          cursor-pointer disabled:cursor-not-allowed
+        `}
+          disabled={slots.length === 0}
+        >
+          Reset
+        </button>
     </div>
   );
 };

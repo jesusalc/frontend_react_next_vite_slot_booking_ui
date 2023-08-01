@@ -1,11 +1,11 @@
 
 import React from 'react';
-import { Slot, SlotsAvailableProps } from '../types';
+import { Slot, SlotsBookedProps } from '../types_booked';
 
-const AvailableSlots: React.FC<SlotsAvailableProps> = ({ slots, onBookSlot }) => {
+const BookedSlots: React.FC<SlotsBookedProps> = ({ slots, onBookSlot }) => {
   return (
     <div className="p-4">
-      <h2 className="text-xl mb-4">Available Slots</h2>
+      <h2 className="text-xl mb-4">Booked Slots</h2>
       <ul>
         {slots.map((slot: any, index: any): any => (
           <li key={index} className="mb-2 flex justify-between">
@@ -23,4 +23,4 @@ const AvailableSlots: React.FC<SlotsAvailableProps> = ({ slots, onBookSlot }) =>
   );
 }
 
-export default AvailableSlots;
+export default BookedSlots;

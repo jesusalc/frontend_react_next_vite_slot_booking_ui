@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { Slot, BookingFormProps, ApiResponse, SlotBooked} from '../types_booked'; // Adjust the path accordingly
+import { Slot, AvailableFormProps, ApiResponse, SlotAvailable} from '../types_available'; // Adjust the path accordingly
 import CalendarWithSlots from './CalendarWithSlots'; // Adjust the path accordingly
 
-const BookingForm: React.FC<BookingFormProps> = ({ onSearchSlots }) => {
+const AvailableForm: React.FC<AvailableFormProps> = ({ onSearchSlots }) => {
   const [date, setDate] = useState<string>('');
   const [duration, setDuration] = useState<string>('');
   const [errors, setErrors] = useState<{ date?: string; duration?: string }>({});
-  const [slots, setSlots] = useState<SlotBooked[]>([]);
-  const [defaultSlots, setDefaultSlots] = useState<SlotBooked[]>([]);
+  const [slots, setSlots] = useState<SlotAvailable[]>([]);
+  const [defaultSlots, setDefaultSlots] = useState<SlotAvailable[]>([]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -77,7 +77,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSearchSlots }) => {
   };
 
   const handleResetSlot = (slotDate: string | null, index_of_the_slot_from_slots: number | null) => {
-    slots.map((slotBooked: SlotBooked, index: number) => {
+    slots.map((slotAvailable: SlotAvailable, index: number) => {
       if (slots[index].disabled ) {
          slots[index].count += 1
       }
@@ -120,4 +120,4 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSearchSlots }) => {
 
 }
 
-export default BookingForm;
+export default AvailableForm;
