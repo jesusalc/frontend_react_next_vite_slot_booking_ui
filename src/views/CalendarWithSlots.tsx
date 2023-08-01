@@ -139,14 +139,22 @@ const CalendarWithSlots: React.FC<CalendarWithSlotsProps> = ({
   const currentDate = earliestDate ? new Date(earliestDate) : new Date();
   // Extract the date property from the slots array to use as bookedDates
   const bookedDates = slots.map((slot) => new Date(slot.date));
-
+  const hasBookedDatesInMonth = (month: Date, bookedDates: Date[]): boolean => {
+    return bookedDates.some(date =>
+      date.getFullYear() === month.getFullYear() &&
+      date.getMonth() === month.getMonth()
+    );
+  };
   return (
     <div className="calendar">
       <div className="calendar flex">
           {/* Calendar months */}
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             {months.map((month, index) => (
-              <CalendarMonth key={index} month={month} bookedDates={bookedDates} />
+              (hasBookedDatesInMonth(month, bookedDates)) ?
+                <CalendarMonth key={index} month={month} bookedDates={bookedDates} />
+              :
+                 null
             ))}
           </div>
       </div>

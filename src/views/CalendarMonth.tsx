@@ -9,7 +9,7 @@ interface CalendarMonthProps {
 
 const CalendarMonth: React.FC<CalendarMonthProps> = ({ month, bookedDates }) => {
 
-
+  console.log('CalendarMonth month:', month, ' bookedDates:', bookedDates);
   const weeks: { weekNumber: number; dates: Date[] }[] = useMemo(() => {
     const firstDayOfMonth = startOfMonth(month);
     const weeksInMonth = getWeeksInMonth(month, { weekStartsOn: 1 }); // Start week on Monday
@@ -57,13 +57,14 @@ const CalendarMonth: React.FC<CalendarMonthProps> = ({ month, bookedDates }) => 
       </div>
 
       {/* Render the weeks */}
-      {Array.from({ length: 5 }).map((_, weekIndex) => (
-        <div key={weekIndex} className="week flex border-b border-gray-300 pt-2">
+      {weeks.map(({ weekNumber, dates }) => (
+        <div key={weekNumber} className="week flex border-b border-gray-300 pt-2">
+
           {/* ... rest of the week code ... */}
-          <div className="weeknumber w-8 text-center">{weekIndex + 1}</div>
+          <div className="weeknumber w-8 text-center">{weekNumber}</div>
           {Array.from({ length: 7 }).map((_, dayIndex) => {
               // ... rest of the day code ...
-              if (weekIndex === 0 && dayIndex < firstDayOfMonth - 1) {
+              if (weekNumber === 1 && dayIndex < firstDayOfMonth - 1) {
                 // Empty cells before the first day of the month
                 return <div key={dayIndex} className="day flex-1 text-center text-gray-700 bg-gray-300"></div>;
               } else if (dayCounter > totalDaysInMonth) {
