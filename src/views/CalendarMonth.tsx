@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import {isSuccessResponse, SlotsBooked, SlotBooked, ApiResponse } from '../types_booked';
-import { format, parseISO, getWeeksInMonth, startOfMonth, addMonths, startOfWeek, addDays, getWeek } from 'date-fns';
-
+import { format, isSameDay, parseISO, getWeeksInMonth, startOfMonth, addMonths, startOfWeek, addDays, getWeek } from 'date-fns';
 
 interface CalendarMonthProps {
   month: Date;
@@ -9,6 +8,7 @@ interface CalendarMonthProps {
 }
 
 const CalendarMonth: React.FC<CalendarMonthProps> = ({ month, bookedDates }) => {
+
 
   const weeks: { weekNumber: number; dates: Date[] }[] = useMemo(() => {
     const firstDayOfMonth = startOfMonth(month);
@@ -36,7 +36,8 @@ const CalendarMonth: React.FC<CalendarMonthProps> = ({ month, bookedDates }) => 
   const [selectedDate, setSelectedDate] = useState<Date|null>(null);
 
   const handleDayClick = (dateDate: Date): void => {
-    setSelectedDate(dateDate);
+    // Store the selected date with hours and minutes reset to 0
+    setSelectedDate(new Date(dateDate.setHours(0, 0, 0, 0)));
   };
   return (
     // <span key={`${month} - ${index}`}>{month.toLocaleString('en-US', { month: 'long', year: 'numeric' })}</span>
@@ -71,18 +72,19 @@ const CalendarMonth: React.FC<CalendarMonthProps> = ({ month, bookedDates }) => 
               } else {
                 // Render the day
                 const currentDate = new Date(month.getFullYear(), month.getMonth(), dayCounter);
+                const isBooked = bookedDates.some(date =>
+                  date.getFullYear() === currentDate.getFullYear() &&
+                  date.getMonth() === currentDate.getMonth() &&
+                  date.getDate() === currentDate.getDate()
+                );
+
                 return (
                   <button
                     key={dayIndex}
-                    className="day flex-1 text-center"
+                    className={`day flex-1 text-center ${isBooked ? 'bg-blue-200 shadow-md' : ''}`}
                     onClick={() => handleDayClick(currentDate)}
                   >
                     {dayCounter++}
-                    {bookedDates.some(date => date.getTime() === currentDate.getTime()) && (
-                      <span className="mt-1 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">
-                        Booked
-                      </span>
-                    )}
                   </button>
                 );
             }
@@ -99,9 +101,13 @@ const CalendarMonth: React.FC<CalendarMonthProps> = ({ month, bookedDates }) => 
             </h3>
             <ul>
               {bookedDates
-                .filter(date => date.getTime() === selectedDate.getTime())
+                .filter(date =>
+                  date.getFullYear() === selectedDate.getFullYear() &&
+                  date.getMonth() === selectedDate.getMonth() &&
+                  date.getDate() === selectedDate.getDate()
+                )
                 .map((date, index) => (
-                  <li key={index}>{format(date, 'hh:mm a')}</li>
+                  <li key={index}>{format(date, 'hh:mm a')}</li> // make sure your booked dates have correct hours and minutes
                 ))}
             </ul>
             <button onClick={() => setSelectedDate(null)} className="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">
