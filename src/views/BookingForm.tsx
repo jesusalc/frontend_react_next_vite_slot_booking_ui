@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Slot, BookingFormProps, ApiResponse, SlotBooked} from '../types_booked'; // Adjust the path accordingly
 import CalendarWithSlots from './CalendarWithSlots'; // Adjust the path accordingly
 
+
+
 const BookingForm: React.FC<BookingFormProps> = ({ onSearchSlots }) => {
   const [date, setDate] = useState<string>('');
   const [duration, setDuration] = useState<string>('');

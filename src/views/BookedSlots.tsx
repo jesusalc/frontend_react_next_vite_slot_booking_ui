@@ -103,7 +103,7 @@ const BookedSlots: React.FC<SlotsBookedProps> = ({ slots, onBookSlot }) => {
             {slotsForDay.map((slot: any, slotIndex: any) => (
               <div key={slotIndex} className="flex items-center mb-2">
                 {/* Show day number and count */}
-                <div className="w-8 h-8 flex items-center justify-center bg-blue-500 text-white font-bold rounded-md mr-2">
+                <div className="w-90 h-90 flex items-center justify-center bg-blue-500 text-white font-bold rounded-md mr-2">
                   {/* {format(parseISO(slot.start), 'd')} */}
                   {formatSlotTime(slot.start, slot.end)}
                   {/* <span className="text-gray-800">{formatSlotTime(slot.start, slot.end)}</span> */}
