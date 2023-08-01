@@ -2,6 +2,9 @@ import React, { useState, useEffect, useMemo } from 'react';
 import {isSuccessResponse, SlotsBooked, SlotBooked, ApiResponse } from '../types_booked';
 import { format, parseISO, getWeeksInMonth, startOfMonth, addMonths, startOfWeek, addDays, getWeek } from 'date-fns';
 
+import CalendarMonth from './CalendarMonth';
+
+
 interface CalendarWithSlotsProps {
   slots: SlotBooked[];
   defaultSlots: SlotBooked[];
@@ -10,56 +13,6 @@ interface CalendarWithSlotsProps {
   handleDiminishSlot: (slotDate: string, index: number) => void;
   handleResetSlot: (slotDate: string, index: number) => void;
 }
-
-
-const CalendarMonth: React.FC<{ month: Date }> = ({ month }) => {
-  const weeks: Date[][] = useMemo(() => {
-    const firstDayOfMonth = startOfMonth(month);
-    const weeksInMonth = getWeeksInMonth(month, { weekStartsOn: 1 }); // Start week on Monday
-    const weeksArray: Date[][] = [];
-
-    let currentDate = firstDayOfMonth;
-    for (let weekIndex = 0; weekIndex < weeksInMonth; weekIndex++) {
-      const week: Date[] = [];
-      for (let dayIndex = 0; dayIndex < 7; dayIndex++) {
-        week.push(currentDate);
-        currentDate = addDays(currentDate, 1);
-      }
-      weeksArray.push(week);
-    }
-
-    return weeksArray;
-  }, [month]);
-
-  return (
-    <div className="month">
-      {/* Render the month name */}
-      <div className="month-name">{format(month, 'MMMM yyyy')}</div>
-      {/* Render the weeks */}
-      {weeks.map((week, weekIndex) => (
-        <div key={weekIndex} className="week">
-          {/* Render the weekdays */}
-          <div className="weekdays">
-            <div className="weekday">Mon</div>
-            <div className="weekday">Tue</div>
-            <div className="weekday">Wed</div>
-            <div className="weekday">Thu</div>
-            <div className="weekday">Fri</div>
-            <div className="weekday">Sat</div>
-            <div className="weekday">Sun</div>
-          </div>
-          {/* Render the days */}
-          {week.map((day, dayIndex) => (
-            <div key={dayIndex} className="day">
-              {format(day, 'd')}
-              {/* Render slots here for each day if needed */}
-            </div>
-          ))}
-        </div>
-      ))}
-    </div>
-  );
-};
 
 
 
@@ -184,50 +137,18 @@ const CalendarWithSlots: React.FC<CalendarWithSlotsProps> = ({
   };
 
   const currentDate = earliestDate ? new Date(earliestDate) : new Date();
-
+  // Extract the date property from the slots array to use as bookedDates
+  const bookedDates = slots.map((slot) => new Date(slot.date));
 
   return (
     <div className="calendar">
-      <div className="calendar-grid">
-        {months.map((month) => (
-          <div key={month.getTime()} className="month">
-            <div className="month-name">{format(month, 'MMMM yyyy')}</div>
-            <div className="weekdays">
-              <div className="week-number">{'#'}</div>
-              <div className="weekday">Mon</div>
-              <div className="weekday">Tue</div>
-              <div className="weekday">Wed</div>
-              <div className="weekday">Thu</div>
-              <div className="weekday">Fri</div>
-              <div className="weekday">Sat</div>
-              <div className="weekday">Sun</div>
-            </div>
-            <div className="weeks">
-              {generateWeeks(month).map((week, index) => (
-                <div key={index} className="week">
-                  {week.map((date) => (
-                    <div key={date.getTime()} className="weekday">
-                      <div className="week-number">{getWeek(date)}</div>
-                      <div className="day-number">{format(date, 'd')}</div>
-                      <div className="slots">
-                        {/* Render the slots for each day */}
-                        {getSlotsForDate(date).map((slot, slotIndex) => (
-                          <button key={slotIndex} className="slot-button">
-                            {/* Customize the slot button content as needed */}
-                            {/* <div>{slot.date}</div> */}
-                            {formatSlotCalendarTime(slot.date, slot.count)}
-                            {/* <div>Start: {format(parseISO(slot.date), 'HH:mm')}</div> */}
-                            {/* <div>End: {format(parseISO(slot.count), 'HH:mm')}</div> */}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
+      <div className="calendar flex">
+          {/* Calendar months */}
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+            {months.map((month, index) => (
+              <CalendarMonth key={index} month={month} bookedDates={bookedDates} />
+            ))}
           </div>
-        ))}
       </div>
 
       <div>
